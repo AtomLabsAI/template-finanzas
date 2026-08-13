@@ -1,19 +1,13 @@
-import type { Cuenta, DatosFinanzas, Movimiento, TipoMovimiento } from "../types";
+import type { NuevoMovimiento, TipoMovimiento } from "../types";
 
 /**
- * Datos de ejemplo para que el dashboard funcione sin conectar nada.
- * Se generan sobre los últimos 12 meses relativos a hoy, así la demo
- * siempre se ve actual. Cuando conectes tu base de datos real este
- * archivo deja de usarse (ver lib/data/index.ts).
+ * Datos de ejemplo OPCIONALES: solo se cargan si el usuario aprieta
+ * "Cargar datos de ejemplo" en el estado vacío del dashboard, y se
+ * borran con "Borrar todos los movimientos". El dashboard siempre
+ * arranca vacío. Si no querés ofrecer la demo, borrá este archivo
+ * y el botón en components/Dashboard.tsx.
  */
 
-const CUENTAS: Cuenta[] = [
-  { id: "c1", nombre: "Banco USD", moneda: "USD" },
-  { id: "c2", nombre: "Banco Pesos", moneda: "UYU" },
-  { id: "c3", nombre: "Billetera USD", moneda: "USD" },
-];
-
-// Ítems recurrentes: se repiten todos los meses con una pequeña variación.
 interface ItemRecurrente {
   dia: number;
   tipo: TipoMovimiento;
@@ -24,6 +18,7 @@ interface ItemRecurrente {
   cuenta: string;
 }
 
+// Ítems que se repiten todos los meses, con una pequeña variación.
 const RECURRENTES: ItemRecurrente[] = [
   { dia: 3, tipo: "ingreso", descripcion: "Retainer Cliente A", categoria: "Consultoría", monto: 1800, moneda: "USD", cuenta: "Banco USD" },
   { dia: 10, tipo: "ingreso", descripcion: "Retainer Cliente B", categoria: "Consultoría", monto: 1200, moneda: "USD", cuenta: "Banco USD" },
@@ -46,10 +41,10 @@ function variacion(base: number, mesIndex: number, dia: number): number {
   return Math.round(base * factor);
 }
 
-function generarMovimientos(): Movimiento[] {
+/** Genera ~12 meses de movimientos de ejemplo, relativos a hoy. */
+export function movimientosDemo(): NuevoMovimiento[] {
   const hoy = new Date();
-  const movimientos: Movimiento[] = [];
-  let id = 1;
+  const movimientos: NuevoMovimiento[] = [];
 
   for (let i = MESES_DE_HISTORIA - 1; i >= 0; i--) {
     const mes = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
@@ -57,7 +52,6 @@ function generarMovimientos(): Movimiento[] {
       const fecha = new Date(mes.getFullYear(), mes.getMonth(), item.dia);
       if (fecha > hoy) continue;
       movimientos.push({
-        id: `m${id++}`,
         fecha: fecha.toISOString().slice(0, 10),
         tipo: item.tipo,
         descripcion: item.descripcion,
@@ -72,7 +66,6 @@ function generarMovimientos(): Movimiento[] {
       const fecha = new Date(mes.getFullYear(), mes.getMonth(), 22);
       if (fecha <= hoy) {
         movimientos.push({
-          id: `m${id++}`,
           fecha: fecha.toISOString().slice(0, 10),
           tipo: "ingreso",
           descripcion: "Proyecto puntual",
@@ -85,9 +78,5 @@ function generarMovimientos(): Movimiento[] {
     }
   }
 
-  return movimientos.sort((a, b) => b.fecha.localeCompare(a.fecha));
-}
-
-export async function getDatosMock(): Promise<DatosFinanzas> {
-  return { movimientos: generarMovimientos(), cuentas: CUENTAS };
+  return movimientos;
 }

@@ -17,13 +17,5 @@ export interface Movimiento {
   cuenta: string;
 }
 
-export interface Cuenta {
-  id: string;
-  nombre: string;
-  moneda: string;
-}
-
-export interface DatosFinanzas {
-  movimientos: Movimiento[];
-  cuentas: Cuenta[];
-}
+/** Lo que se completa en el formulario: todo menos el id, que lo asigna la fuente. */
+export type NuevoMovimiento = Omit<Movimiento, "id">;

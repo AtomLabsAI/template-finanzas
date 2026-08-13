@@ -1,11 +1,13 @@
 import type { Movimiento } from "@/lib/types";
 import { formatFecha, formatMonto } from "@/lib/format";
 
-/** Tabla de movimientos recientes. */
+/** Tabla de movimientos recientes, con borrado por fila. */
 export function MovimientosTable({
   movimientos,
+  onEliminar,
 }: {
   movimientos: Movimiento[];
+  onEliminar?: (id: string) => void;
 }) {
   if (movimientos.length === 0) {
     return (
@@ -29,6 +31,7 @@ export function MovimientosTable({
               Cuenta
             </th>
             <th className="py-2 text-right font-medium">Monto</th>
+            {onEliminar && <th className="w-8" aria-label="Acciones" />}
           </tr>
         </thead>
         <tbody>
@@ -52,6 +55,18 @@ export function MovimientosTable({
                 {m.tipo === "egreso" ? "−" : m.tipo === "ingreso" ? "+" : ""}
                 {formatMonto(m.monto, m.moneda)}
               </td>
+              {onEliminar && (
+                <td className="py-2.5 pl-2 text-right">
+                  <button
+                    onClick={() => onEliminar(m.id)}
+                    aria-label={`Eliminar ${m.descripcion}`}
+                    title="Eliminar"
+                    className="rounded px-1.5 text-muted hover:text-critico"
+                  >
+                    ✕
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

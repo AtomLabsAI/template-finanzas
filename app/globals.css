@@ -23,6 +23,7 @@
   /* Semánticos */
   --positivo: #006300;
   --negativo: #0b0b0b;
+  --critico: #d03b3b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,6 +43,7 @@
 
     --positivo: #0ca30c;
     --negativo: #ffffff;
+    --critico: #d03b3b;
   }
 }
 
@@ -57,6 +59,7 @@
   --color-series-1: var(--series-1);
   --color-series-2: var(--series-2);
   --color-positivo: var(--positivo);
+  --color-critico: var(--critico);
   --font-sans: var(--font-geist-sans);
 }
 
